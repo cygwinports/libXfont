@@ -1,0 +1,4 @@
+category: X11
+requires: cygwin libfontenc fontsproto xproto libfreetype2-devel zlib
+sdesc: "Xorg font library (development)"
+ldesc: "Xorg font library"

@@ -1,0 +1,91 @@
+libXfont
+------------------------------------------
+Xorg font library
+
+Runtime requirements:
+  cygwin-1.5.20-1
+  libfontenc1-1.0.2-1
+  libfreetype26-2.1.10-1
+  zlib-1.2.3-1
+
+Build requirements:
+(besides corresponding devel packages)
+  cygwin-1.5.20-1
+  autoconf2.5-2.59-2
+  automake1.7-1.9.6-1
+  binutils-20050610-1
+  cygport-0.2.1-1
+  gawk-3.1.5-2
+  gcc-core-3.4.4-1
+  libtool1.5-1.5.22-1
+  make-3.80-1
+  pkg-config-0.20-1
+  sed-4.1.5-1
+  fontsproto-2.0.2-1
+  xorg-util-macros-1.0.2-1
+  xproto-7.0.7-1
+  xtrans-1.0.0-1
+
+Canonical website:
+  http://xorg.freedesktop.org/
+
+Canonical download:
+  http://xorg.freedesktop.org/releases/individual/lib/
+
+-------------------------------------------
+
+Build instructions:
+  unpack libXfont-1.1.0-X-src.tar.bz2
+    if you use setup to install this src package, it will be
+	 unpacked under /usr/src automatically
+  cd /usr/src
+  cygport ./libXfont-1.1.0-X.cygport all
+
+This will create:
+  /usr/src/libXfont-1.1.0-X-src.tar.bz2
+  /usr/src/libXfont-1.1.0-X.tar.bz2
+  /usr/src/libXfont1-1.1.0-X.tar.bz2
+
+-------------------------------------------
+
+Files included in the main package:
+
+  /usr/include/X11/fonts/bdfint.h
+  /usr/include/X11/fonts/bitmap.h
+  /usr/include/X11/fonts/bufio.h
+  /usr/include/X11/fonts/fntfil.h
+  /usr/include/X11/fonts/fntfilio.h
+  /usr/include/X11/fonts/fntfilst.h
+  /usr/include/X11/fonts/fontconf.h
+  /usr/include/X11/fonts/fontencc.h
+  /usr/include/X11/fonts/fontmisc.h
+  /usr/include/X11/fonts/fontmod.h
+  /usr/include/X11/fonts/fontshow.h
+  /usr/include/X11/fonts/fontutil.h
+  /usr/include/X11/fonts/fontxlfd.h
+  /usr/include/X11/fonts/pcf.h
+  /usr/lib/libXfont.dll.a
+  /usr/lib/libXfont.la
+  /usr/lib/pkgconfig/xfont.pc
+  /usr/share/doc/Cygwin/libXfont-1.1.0.README
+  /usr/share/doc/libXfont-1.1.0/AUTHORS
+  /usr/share/doc/libXfont-1.1.0/COPYING
+  /usr/share/doc/libXfont-1.1.0/ChangeLog
+
+Files included in the runtime package:
+
+  /usr/bin/cygXfont-1.dll
+
+------------------
+
+Port Notes:
+
+----- version 1.1.0-1 -----
+X11R7.1 version bump.
+
+----- version 1.0.0-1 -----
+Initial Cygwin release of modular X11R7.0.
+
+
+Cygwin port maintained by:
+http://cygwinports.dotsrc.org/
