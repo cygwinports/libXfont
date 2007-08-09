@@ -1,5 +1,5 @@
 category: X11
-requires: cygwin libfontenc-devel fontsproto xproto libfreetype2-devel zlib
+requires: cygwin libXfont1 libfontenc-devel fontsproto xproto libfreetype2-devel zlib
 external-source: libXfont
 sdesc: "Xorg font library (development)"
 ldesc: "Xorg font library"
