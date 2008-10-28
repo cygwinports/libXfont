@@ -1,0 +1,9 @@
+inherit xorg
+
+PKG_NAMES="${PN} ${PN}1 ${PN}-devel"
+PKG_HINTS="setup runtime devel"
+libXfont_CONTENTS=	# empty
+libXfont1_CONTENTS='usr/bin/*.dll usr/share/doc/'
+libXfont_devel_CONTENTS='usr/include/ usr/lib/'
+
+CYGCONF_ARGS="--with-encodingsdir=/usr/share/fonts/encodings"
