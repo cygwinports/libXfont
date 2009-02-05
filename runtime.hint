@@ -1,5 +1,5 @@
 category: X11
-requires: cygwin libfontenc1 libfreetype26 zlib
+requires: cygwin libfontenc1 libfreetype6 zlib
 external-source: libXfont
 sdesc: "X.Org font library (runtime)"
 ldesc: "X.Org font library"
