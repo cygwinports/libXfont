@@ -13,7 +13,7 @@ Build requirements:
   autoconf2.5-2.63-1
   automake1.10-1.10.1-2
   binutils-20080624-2
-  cygport-0.4.3-1
+  cygport-0.4.4-1
   gawk-3.1.6-1
   gcc-core-3.4.4-3
   libtool-2.2.6a-1
@@ -23,7 +23,7 @@ Build requirements:
   fontsproto-2.0.2-1
   xorg-util-macros-1.2.1-1
   xproto-7.0.14-1
-  xtrans-1.2.2-3
+  xtrans-1.2.3-1
 
 Canonical website:
   http://xorg.freedesktop.org/
@@ -34,17 +34,16 @@ Canonical download:
 -------------------------------------------
 
 Build instructions:
-  unpack libXfont-1.3.4-X-src.tar.bz2
+  unpack libXfont-1.4.0-X-src.tar.bz2
     if you use setup to install this src package, it will be
 	 unpacked under /usr/src automatically
   cd /usr/src
-  cygport ./libXfont-1.3.4-X.cygport all
+  cygport ./libXfont-1.4.0-X.cygport all
 
 This will create:
-  /usr/src/libXfont-1.3.4-X-src.tar.bz2
-  /usr/src/libXfont-1.3.4-X.tar.bz2
-  /usr/src/libXfont-devel-1.3.4-X.tar.bz2
-  /usr/src/libXfont1-1.3.4-X.tar.bz2
+  /usr/src/libXfont-1.4.0-X-src.tar.bz2
+  /usr/src/libXfont-devel-1.4.0-X.tar.bz2
+  /usr/src/libXfont1-1.4.0-X.tar.bz2
 
 -------------------------------------------
 
@@ -52,9 +51,9 @@ Files included in the binary packages:
 
 (libXfont1)
   /usr/bin/cygXfont-1.dll
-  /usr/share/doc/libXfont-1.3.4/AUTHORS
-  /usr/share/doc/libXfont-1.3.4/COPYING
-  /usr/share/doc/libXfont-1.3.4/ChangeLog
+  /usr/share/doc/libXfont-1.4.0/AUTHORS
+  /usr/share/doc/libXfont-1.4.0/COPYING
+  /usr/share/doc/libXfont-1.4.0/ChangeLog
 
 (libXfont-devel)
   /usr/include/X11/fonts/bdfint.h
@@ -66,10 +65,11 @@ Files included in the binary packages:
   /usr/include/X11/fonts/fontconf.h
   /usr/include/X11/fonts/fontencc.h
   /usr/include/X11/fonts/fontmisc.h
-  /usr/include/X11/fonts/fontmod.h
   /usr/include/X11/fonts/fontshow.h
   /usr/include/X11/fonts/fontutil.h
   /usr/include/X11/fonts/fontxlfd.h
+  /usr/include/X11/fonts/ft.h
+  /usr/include/X11/fonts/ftfuncs.h
   /usr/include/X11/fonts/pcf.h
   /usr/lib/libXfont.a
   /usr/lib/libXfont.dll.a
@@ -79,6 +79,9 @@ Files included in the binary packages:
 ------------------
 
 Port Notes:
+
+----- version 1.4.0-1 -----
+Version bump.
 
 ----- version 1.3.4-1 -----
 Version bump.
