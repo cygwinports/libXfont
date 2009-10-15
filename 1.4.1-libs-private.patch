@@ -1,0 +1,10 @@
+Pushed upstream post-1.4.1.
+
+--- origsrc/libXfont-1.4.1/xfont.pc.in	2006-07-11 13:05:21.000000000 -0500
++++ src/libXfont-1.4.1/xfont.pc.in	2009-10-14 01:09:15.260119600 -0500
+@@ -10,4 +10,4 @@ Requires: xproto fontsproto
+ Requires.private: fontenc @FREETYPE_REQUIRES@
+ Cflags: -I${includedir}
+ Libs: -L${libdir} -lXfont
+-Libs.private: -lz -lm
++Libs.private: @Z_LIBS@ -lm
