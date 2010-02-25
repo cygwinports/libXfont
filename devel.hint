@@ -1,5 +1,5 @@
 category: X11
-requires: libXfont1 libbz2-devel libfontenc-devel fontsproto xproto libfreetype-devel zlib-devel
+requires: libbz2-devel libfontenc-devel fontsproto xproto libfreetype-devel zlib-devel
 external-source: libXfont
 sdesc: "X.Org font library (development)"
 ldesc: "X.Org font library"
