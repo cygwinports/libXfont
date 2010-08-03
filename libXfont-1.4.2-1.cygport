@@ -1,7 +1,5 @@
 inherit xorg
 
-PATCH_URI="1.4.1-libs-private.patch"
-
 PKG_NAMES="${PN} ${PN}-devel" # ${PN}1
 PKG_HINTS="setup devel" # runtime
 #libXfont1_CONTENTS='usr/bin/*.dll usr/share/doc/'
