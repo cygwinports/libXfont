@@ -1,7 +1,6 @@
 inherit xorg git
 
-PKG_NAMES="${PN} ${PN}-devel" # ${PN}1
-PKG_HINTS="setup devel" # runtime
+PKG_NAMES="${PN}-devel" # ${PN}1
 #libXfont1_CONTENTS='usr/bin/*.dll usr/share/doc/'
 libXfont_devel_CONTENTS='usr/include/ usr/lib/ usr/share/doc/'
 
