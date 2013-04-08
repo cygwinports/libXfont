@@ -1,5 +1,8 @@
 inherit xorg
 
+NAME="libXfont"
+VERSION=1.4.5
+RELEASE=2
 CATEGORY="X11"
 SUMMARY="X.Org font library"
 
