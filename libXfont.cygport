@@ -1,12 +1,18 @@
 inherit xorg
 
 NAME="libXfont"
-VERSION=1.4.5
-RELEASE=2
-CATEGORY="X11"
+VERSION=1.4.6
+RELEASE=1
+CATEGORY="Libs"
 SUMMARY="X.Org font library"
+DESCRIPTION="libXfont provides the core of the legacy X11 font system, handling
+the index files (fonts.dir, fonts.alias, fonts.scale), the various font file
+formats, and rasterizing them.   It is used by the X servers, the X Font Server
+(xfs), and some font utilities (e.g. bdftopcf), but should not be used by
+normal X11 clients.  X11 clients access fonts via either the new APIs in
+libXft, or the legacy APIs in libX11."
 
-PKG_NAMES="${PN}-devel" # ${PN}1
+PKG_NAMES="${NAME}-devel" # ${NAME}1
 #libXfont1_CONTENTS='usr/bin/*.dll usr/share/doc/'
 libXfont_devel_CONTENTS='usr/include/ usr/lib/ usr/share/doc/'
 
