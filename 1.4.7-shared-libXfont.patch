@@ -1,0 +1,442 @@
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -65,4 +65,4 @@ libXfont_la_LIBADD = \
+ 
+ libXfont_la_SOURCES = dummy.c
+ 
+-libXfont_la_LDFLAGS = -version-number 1:4:1
++libXfont_la_LDFLAGS = -version-number 1:4:1 -no-undefined
+--- a/src/bitmap/bitscale.c
++++ b/src/bitmap/bitscale.c
+@@ -60,7 +60,7 @@ from The Open Group.
+ #endif
+ 
+ /* Should get this from elsewhere */
+-extern unsigned long serverGeneration;
++extern unsigned long __GetServerGeneration(void);
+ 
+ static void bitmapUnloadScalable (FontPtr pFont);
+ static void ScaleBitmap ( FontPtr pFont, CharInfoPtr opci,
+@@ -597,9 +597,9 @@ ComputeScaledProperties(FontInfoPtr sourceFontInfo, /* the font to be scaled */
+     char	*isStringProp;
+     int		nProps;
+ 
+-    if (bitscaleGeneration != serverGeneration) {
++    if (bitscaleGeneration != __GetServerGeneration()) {
+ 	initFontPropTable();
+-	bitscaleGeneration = serverGeneration;
++	bitscaleGeneration = __GetServerGeneration();
+     }
+     nProps = NPROPS + 1 + sizeof(fontPropTable) / sizeof(fontProp) +
+ 			  sizeof(rawFontPropTable) / sizeof(fontProp);
+--- a/src/fc/fserve.c
++++ b/src/fc/fserve.c
+@@ -2034,7 +2034,7 @@ fs_send_load_glyphs(pointer client, FontPtr pfont,
+ }
+ 
+ 
+-extern pointer serverClient;	/* This could be any number that
++extern pointer __GetServerClient(void);	/* This could be any number that
+ 				   doesn't conflict with existing
+ 				   client values. */
+ 
+@@ -2206,17 +2206,17 @@ fs_load_all_glyphs(FontPtr pfont)
+      * perform an unpleasant job that, we hope, will never be required.
+      */
+ 
+-    while ((err = _fs_load_glyphs(serverClient, pfont, TRUE, 0, 0, NULL)) ==
++    while ((err = _fs_load_glyphs(__GetServerClient(), pfont, TRUE, 0, 0, NULL)) ==
+ 	   Suspended)
+     {
+ 	if (fs_await_reply (conn) != FSIO_READY)
+ 	{
+ 	    /* Get rid of blockrec */
+-	    fs_client_died(serverClient, pfont->fpe);
++	    fs_client_died(__GetServerClient(), pfont->fpe);
+ 	    err = BadCharRange;
+ 	    break;
+ 	}
+-	fs_read_reply (pfont->fpe, serverClient);
++	fs_read_reply (pfont->fpe, __GetServerClient());
+     }
+     return err;
+ }
+--- a/src/fontfile/renderers.c
++++ b/src/fontfile/renderers.c
+@@ -40,7 +40,7 @@ static FontRenderersRec	renderers;
+  * XXX Maybe should allow unregistering renders. For now, just clear the
+  * list at each new generation.
+  */
+-extern unsigned long serverGeneration;
++extern unsigned long __GetServerGeneration(void);
+ static unsigned long rendererGeneration = 0;
+ 
+ Bool
+@@ -55,8 +55,8 @@ FontFilePriorityRegisterRenderer (FontRendererPtr renderer, int priority)
+     int		    i;
+     struct _FontRenderersElement *new;
+ 
+-    if (rendererGeneration != serverGeneration) {
+-	rendererGeneration = serverGeneration;
++    if (rendererGeneration != __GetServerGeneration()) {
++	rendererGeneration = __GetServerGeneration();
+ 	renderers.number = 0;
+ 	if (renderers.renderers)
+ 	   free(renderers.renderers);
+--- a/src/stubs/Makefile.am
++++ b/src/stubs/Makefile.am
+@@ -10,7 +10,6 @@ libstubs_la_SOURCES = 		\
+ 	csignal.c		\
+ 	delfntcid.c		\
+ 	errorf.c		\
+-	fatalerror.c		\
+ 	findoldfnt.c		\
+ 	getcres.c		\
+ 	getdefptsize.c		\
+@@ -22,4 +21,5 @@ libstubs_la_SOURCES = 		\
+ 	servclient.c		\
+ 	setfntauth.c		\
+ 	stfntcfnt.c		\
++	stubsinit.c		\
+ 	stubs.h
+--- a/src/stubs/cauthgen.c
++++ b/src/stubs/cauthgen.c
+@@ -10,5 +10,6 @@
+ weak int
+ client_auth_generation(ClientPtr client)
+ {
++    OVERRIDE_SYMBOL(client_auth_generation, client);
+     return 0;
+ }
+--- a/src/stubs/csignal.c
++++ b/src/stubs/csignal.c
+@@ -10,5 +10,6 @@
+ weak Bool
+ ClientSignal(ClientPtr client)
+ {
++    OVERRIDE_SYMBOL(ClientSignal,client);
+     return True;
+ }
+--- a/src/stubs/delfntcid.c
++++ b/src/stubs/delfntcid.c
+@@ -10,4 +10,5 @@
+ weak void
+ DeleteFontClientID(Font id)
+ {
++    OVERRIDE_SYMBOL(DeleteFontClientID, id);
+ }
+--- a/src/stubs/errorf.c
++++ b/src/stubs/errorf.c
+@@ -10,4 +10,5 @@
+ weak void
+ ErrorF(const char *f, ...)
+ {
++    OVERRIDE_VA_SYMBOL(VErrorF, f);
+ }
+--- a/src/stubs/findoldfnt.c
++++ b/src/stubs/findoldfnt.c
+@@ -10,5 +10,6 @@
+ weak FontPtr
+ find_old_font(FSID id)
+ {
++    OVERRIDE_SYMBOL(find_old_font, id);
+     return (FontPtr)NULL;
+ }
+--- a/src/stubs/getcres.c
++++ b/src/stubs/getcres.c
+@@ -10,5 +10,6 @@
+ weak FontResolutionPtr
+ GetClientResolutions(int *num)
+ {
++  OVERRIDE_SYMBOL(GetClientResolutions, num);
+   return (FontResolutionPtr) 0;
+ }
+--- a/src/stubs/getdefptsize.c
++++ b/src/stubs/getdefptsize.c
+@@ -10,5 +10,6 @@
+ weak int
+ GetDefaultPointSize(void)
+ {
++    OVERRIDE_SYMBOL(GetDefaultPointSize);
+     return 0;
+ }
+--- a/src/stubs/getnewfntcid.c
++++ b/src/stubs/getnewfntcid.c
+@@ -10,5 +10,6 @@
+ weak Font
+ GetNewFontClientID(void)
+ {
++    OVERRIDE_SYMBOL(GetNewFontClientID);
+     return (Font)0;
+ }
+--- a/src/stubs/gettime.c
++++ b/src/stubs/gettime.c
+@@ -10,5 +10,6 @@
+ weak unsigned long
+ GetTimeInMillis (void)
+ {
++    OVERRIDE_SYMBOL(GetTimeInMillis);
+     return 0;
+ }
+--- a/src/stubs/initfshdl.c
++++ b/src/stubs/initfshdl.c
+@@ -11,5 +11,6 @@ weak int
+ init_fs_handlers(FontPathElementPtr fpe,
+                  BlockHandlerProcPtr block_handler)
+ {
++  OVERRIDE_SYMBOL(init_fs_handlers, fpe, block_handler);
+   return Successful;
+ }
+--- a/src/stubs/regfpefunc.c
++++ b/src/stubs/regfpefunc.c
+@@ -24,5 +24,9 @@ RegisterFPEFunctions(NameCheckFunc name_func,
+ 		     NextLaFunc next_list_alias_func,
+ 		     SetPathFunc set_path_func)
+ {
++    OVERRIDE_SYMBOL(RegisterFPEFunctions, name_func, init_func, free_func,
++                    reset_func, open_func, close_func, list_func, start_lfwi_func,
++                    next_lfwi_func, wakeup_func, client_died, load_glyphs,
++                    start_list_alias_func, next_list_alias_func, set_path_func);
+     return 0;
+ }
+--- a/src/stubs/rmfshdl.c
++++ b/src/stubs/rmfshdl.c
+@@ -12,4 +12,5 @@ remove_fs_handlers(FontPathElementPtr fpe,
+                    BlockHandlerProcPtr blockHandler,
+                    Bool all)
+ {
++    OVERRIDE_SYMBOL(remove_fs_handlers, fpe, blockHandler, all);
+ }
+--- a/src/stubs/servclient.c
++++ b/src/stubs/servclient.c
+@@ -3,8 +3,11 @@
+ #endif
+ #include "stubs.h"
+ 
+-#ifdef __SUNPRO_C
+-#pragma weak serverClient
+-#endif
++void *__GetServerClient(void);
+ 
+-weak void *serverClient = 0;
++void *
++__GetServerClient(void)
++{
++   OVERRIDE_DATA(serverClient);
++   return NULL;
++}
+--- a/src/stubs/setfntauth.c
++++ b/src/stubs/setfntauth.c
+@@ -10,5 +10,6 @@
+ weak int
+ set_font_authorizations(char **authorizations, int *authlen, ClientPtr client)
+ {
++    OVERRIDE_SYMBOL(set_font_authorizations, authorizations, authlen, client);
+     return 0;
+ }
+--- a/src/stubs/stfntcfnt.c
++++ b/src/stubs/stfntcfnt.c
+@@ -10,5 +10,6 @@
+ weak int
+ StoreFontClientFont(FontPtr pfont, Font id)
+ {
++    OVERRIDE_SYMBOL(StoreFontClientFont, pfont, id);
+     return 0;
+ }
+--- a/src/stubs/stubs.h
++++ b/src/stubs/stubs.h
+@@ -19,6 +19,54 @@
+ #endif
+ #endif
+ 
++#if defined(NO_WEAK_SYMBOLS) && defined(PIC)
++#include <stdarg.h>
++extern int _font_init_stubs(void);
++#define OVERRIDE_DATA(sym) \
++    _font_init_stubs(); \
++    if (__ptr_##sym) \
++      return *__ptr_##sym
++#define OVERRIDE_SYMBOL(sym,...) \
++    _font_init_stubs(); \
++    if (__##sym && __##sym != sym) \
++      return (*__##sym)(__VA_ARGS__)
++#define OVERRIDE_VA_SYMBOL(sym,f) \
++    va_list _args; \
++    _font_init_stubs(); \
++    va_start(_args, f); \
++    if (__##sym) \
++      (*__##sym)(f, _args); \
++    va_end(_args)
++
++int (*__client_auth_generation)(ClientPtr);
++Bool (*__ClientSignal)(ClientPtr);
++void (*__DeleteFontClientID)(Font);
++void (*__VErrorF)(const char *, va_list);
++FontPtr (*__find_old_font)(FSID);
++FontResolutionPtr (*__GetClientResolutions)(int *);
++int (*__GetDefaultPointSize)(void);
++Font (*__GetNewFontClientID)(void);
++unsigned long (*__GetTimeInMillis)(void);
++int (*__init_fs_handlers)(FontPathElementPtr, BlockHandlerProcPtr);
++int (*__RegisterFPEFunctions)(NameCheckFunc, InitFpeFunc, FreeFpeFunc,
++     ResetFpeFunc, OpenFontFunc, CloseFontFunc, ListFontsFunc,
++     StartLfwiFunc, NextLfwiFunc, WakeupFpeFunc, ClientDiedFunc,
++     LoadGlyphsFunc, StartLaFunc, NextLaFunc, SetPathFunc);
++void (*__remove_fs_handlers)(FontPathElementPtr, BlockHandlerProcPtr, Bool);
++void **__ptr_serverClient;
++int (*__set_font_authorizations)(char **, int *, ClientPtr);
++int (*__StoreFontClientFont)(FontPtr, Font);
++Atom (*__MakeAtom)(const char *, unsigned, int);
++int (*__ValidAtom)(Atom);
++char *(*__NameForAtom)(Atom);
++unsigned long *__ptr_serverGeneration;
++void (*__register_fpe_functions)(void);
++#else /* NO_WEAK_SYMBOLS && PIC */
++#define OVERRIDE_DATA(sym)
++#define OVERRIDE_SYMBOL(sym,...)
++#define OVERRIDE_VA_SYMBOL(sym,f)
++#endif
++
+ /* This is really just a hack for now... __APPLE__ really should be using
+  * the weak symbols route above, but it's causing an as-yet unresolved issue,
+  * so we're instead building with flat_namespace.
+--- /dev/null
++++ b/src/stubs/stubsinit.c
+@@ -0,0 +1,77 @@
++#include "stubs.h"
++
++#if defined(NO_WEAK_SYMBOLS) && defined(PIC)
++
++#ifdef _WIN32
++#include <X11/Xwindows.h>
++#define dlopen(h,f) GetModuleHandle(NULL)
++#define dlsym(h,f) GetProcAddress(h,f)
++#else
++#include <dlfcn.h>
++#endif
++
++int (*__client_auth_generation)(ClientPtr) = NULL;
++Bool (*__ClientSignal)(ClientPtr) = NULL;
++void (*__DeleteFontClientID)(Font) = NULL;
++void (*__VErrorF)(const char *, va_list) = NULL;
++FontPtr (*__find_old_font)(FSID) = NULL;
++FontResolutionPtr (*__GetClientResolutions)(int *) = NULL;
++int (*__GetDefaultPointSize)(void) = NULL;
++Font (*__GetNewFontClientID)(void) = NULL;
++unsigned long (*__GetTimeInMillis)(void) = NULL;
++int (*__init_fs_handlers)(FontPathElementPtr, BlockHandlerProcPtr) = NULL;
++int (*__RegisterFPEFunctions)(NameCheckFunc, InitFpeFunc, FreeFpeFunc,
++     ResetFpeFunc, OpenFontFunc, CloseFontFunc, ListFontsFunc,
++     StartLfwiFunc, NextLfwiFunc, WakeupFpeFunc, ClientDiedFunc,
++     LoadGlyphsFunc, StartLaFunc, NextLaFunc, SetPathFunc) = NULL;
++void (*__remove_fs_handlers)(FontPathElementPtr, BlockHandlerProcPtr, Bool) = NULL;
++void **__ptr_serverClient = NULL;
++int (*__set_font_authorizations)(char **, int *, ClientPtr) = NULL;
++int (*__StoreFontClientFont)(FontPtr, Font) = NULL;
++Atom (*__MakeAtom)(const char *, unsigned, int) = NULL;
++int (*__ValidAtom)(Atom) = NULL;
++char *(*__NameForAtom)(Atom) = NULL;
++unsigned long *__ptr_serverGeneration = NULL;
++void (*__register_fpe_functions)(void) = NULL;
++
++#define INIT_SYMBOL(sym) \
++  if (!__##sym) \
++   __##sym = (typeof(__##sym)) dlsym (handle, #sym)
++#define INIT_DATA(sym) \
++  if (!__ptr_##sym) \
++   __ptr_##sym = (typeof(__ptr_##sym)) dlsym (handle, #sym)
++
++int
++_font_init_stubs (void)
++{
++  static int inited = FALSE;
++  static void *handle = NULL;
++  if (inited)
++    return inited;
++  if (!handle)
++    handle = dlopen (NULL, RTLD_LOCAL);
++  INIT_SYMBOL(client_auth_generation);
++  INIT_SYMBOL(ClientSignal);
++  INIT_SYMBOL(DeleteFontClientID);
++  INIT_SYMBOL(VErrorF);
++  INIT_SYMBOL(find_old_font);
++  INIT_SYMBOL(GetClientResolutions);
++  INIT_SYMBOL(GetDefaultPointSize);
++  INIT_SYMBOL(GetNewFontClientID);
++  INIT_SYMBOL(GetTimeInMillis);
++  INIT_SYMBOL(init_fs_handlers);
++  INIT_SYMBOL(RegisterFPEFunctions);
++  INIT_SYMBOL(remove_fs_handlers);
++  INIT_SYMBOL(set_font_authorizations);
++  INIT_SYMBOL(StoreFontClientFont);
++  INIT_SYMBOL(MakeAtom);
++  INIT_SYMBOL(ValidAtom);
++  INIT_SYMBOL(NameForAtom);
++  INIT_SYMBOL(register_fpe_functions);
++  INIT_DATA(serverClient);
++  INIT_DATA(serverGeneration);
++  inited = TRUE;
++  return inited;
++}
++
++#endif /* NO_WEAK_SYMBOLS && PIC */
+--- a/src/util/atom.c
++++ b/src/util/atom.c
+@@ -158,6 +158,8 @@ MakeAtom(const char *string, unsigned len, int makeit)
+     int		h = 0;
+     int		r;
+ 
++    OVERRIDE_SYMBOL(MakeAtom, string, len, makeit);
++
+     hash = Hash (string, len);
+     if (hashTable)
+     {
+@@ -230,6 +232,7 @@ MakeAtom(const char *string, unsigned len, int makeit)
+ weak int
+ ValidAtom(Atom atom)
+ {
++    OVERRIDE_SYMBOL(ValidAtom, atom);
+     return (atom != None) && (atom <= lastAtom);
+ }
+ 
+@@ -240,6 +243,7 @@ ValidAtom(Atom atom)
+ weak char *
+ NameForAtom(Atom atom)
+ {
++    OVERRIDE_SYMBOL(NameForAtom, atom);
+     if (atom != None && atom <= lastAtom)
+ 	return reverseMap[atom]->name;
+     return NULL;
+--- a/src/util/miscutil.c
++++ b/src/util/miscutil.c
+@@ -39,20 +39,25 @@ from The Open Group.
+ 
+ 
+ #ifdef __SUNPRO_C
+-#pragma weak serverGeneration
+ #pragma weak register_fpe_functions
+ #endif
+ 
+ extern void BuiltinRegisterFpeFunctions(void);
+ 
+-#ifndef NO_WEAK_SYMBOLS
+-/* make sure everything initializes themselves at least once */
+-weak unsigned long serverGeneration = 1;
+-#endif
++unsigned long __GetServerGeneration (void);
++
++unsigned long
++__GetServerGeneration (void)
++{
++  OVERRIDE_DATA(serverGeneration);
++  /* make sure everything initializes themselves at least once */
++  return 1;
++}
+ 
+ weak void
+ register_fpe_functions (void)
+ {
++    OVERRIDE_SYMBOL(register_fpe_functions);
+     BuiltinRegisterFpeFunctions();
+     FontFileRegisterFpeFunctions();
+ #ifdef XFONT_FC
