@@ -1,7 +1,7 @@
 inherit xorg
 
 NAME="libXfont"
-VERSION=1.4.8
+VERSION=1.5.0
 RELEASE=1
 CATEGORY="Libs"
 SUMMARY="X.Org font library"
@@ -12,10 +12,8 @@ formats, and rasterizing them.   It is used by the X servers, the X Font Server
 normal X11 clients.  X11 clients access fonts via either the new APIs in
 libXft, or the legacy APIs in libX11."
 
-PATCH_URI="1.4.7-shared-libXfont.patch"
-
 PKG_NAMES="${NAME}1 ${NAME}-devel"
-libXfont1_CONTENTS='usr/bin/*.dll usr/share/doc/'
+libXfont1_CONTENTS='usr/bin/cygXfont-1.dll usr/share/doc/'
 libXfont_devel_CONTENTS='usr/include/ usr/lib/'
 
 CYGCONF_ARGS="--with-bzip2"
